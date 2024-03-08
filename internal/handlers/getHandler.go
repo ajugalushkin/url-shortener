@@ -14,18 +14,18 @@ func GetHandler(wrt http.ResponseWriter, req *http.Request) {
 
 	key := strings.Replace(req.URL.Path, "/", "", -1)
 
-	storageApi, errGetApi := storage.NewStorage()
-	if errGetApi != nil {
+	storageAPI, errGetAPI := storage.NewStorage()
+	if errGetAPI != nil {
 		http.Error(wrt, "Storage not found!", http.StatusBadRequest)
 		return
 	}
 
-	dataURL, err := storageApi.Retrieve(key)
+	dataURL, err := storageAPI.Retrieve(key)
 	if err != nil {
 		http.Error(wrt, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	wrt.Header().Set("Location", dataURL.Url)
+	wrt.Header().Set("Location", dataURL.URL)
 	wrt.WriteHeader(http.StatusTemporaryRedirect)
 }

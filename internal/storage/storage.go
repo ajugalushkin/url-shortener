@@ -30,7 +30,7 @@ func NewStorage() (*Storage, error) {
 }
 
 func (c *Storage) Insert(urlData model.URLData) (int, error) {
-	res, err := c.db.Exec("insert into urls (key,url) values ($1,$2)", urlData.Key, urlData.Url)
+	res, err := c.db.Exec("insert into urls (key,url) values ($1,$2)", urlData.Key, urlData.URL)
 	if err != nil {
 		return 0, err
 	}
@@ -47,7 +47,7 @@ func (c *Storage) Retrieve(id string) (model.URLData, error) {
 
 	urlData := model.URLData{}
 	var err error
-	if err = row.Scan(&urlData.Key, &urlData.Url); err == sql.ErrNoRows {
+	if err = row.Scan(&urlData.Key, &urlData.URL); err == sql.ErrNoRows {
 		return model.URLData{}, err
 	}
 	return urlData, err
@@ -58,7 +58,7 @@ func (c *Storage) RetrieveByURL(url string) (model.URLData, error) {
 
 	urlData := model.URLData{}
 	var err error
-	if err = row.Scan(&urlData.Key, &urlData.Url); err == sql.ErrNoRows {
+	if err = row.Scan(&urlData.Key, &urlData.URL); err == sql.ErrNoRows {
 		return model.URLData{}, err
 	}
 	return urlData, err

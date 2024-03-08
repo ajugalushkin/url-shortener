@@ -27,25 +27,25 @@ func PostHandler(wrt http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	storageApi, errGetApi := storage.NewStorage()
-	if errGetApi != nil {
+	storageAPI, errGetAPI := storage.NewStorage()
+	if errGetAPI != nil {
 		http.Error(wrt, "Storage not found!", http.StatusBadRequest)
 		return
 	}
 
-	UrlData, errGet := storageApi.RetrieveByURL(originalURL)
+	URLData, errGet := storageAPI.RetrieveByURL(originalURL)
 	if errGet != nil {
-		UrlData = model.URLData{
+		URLData = model.URLData{
 			Key: shorten.GenerateShortKey(),
-			Url: originalURL}
-		_, err = storageApi.Insert(UrlData)
+			URL: originalURL}
+		_, err = storageAPI.Insert(URLData)
 		if err != nil {
 			http.Error(wrt, "ShortKey not created", http.StatusNotFound)
 			return
 		}
 	}
 
-	shortenedURL := fmt.Sprintf("http://localhost:8080/%s", UrlData.Key)
+	shortenedURL := fmt.Sprintf("http://localhost:8080/%s", URLData.Key)
 
 	wrt.Header().Set("Content-Type", "text/plan")
 	wrt.WriteHeader(http.StatusCreated)
