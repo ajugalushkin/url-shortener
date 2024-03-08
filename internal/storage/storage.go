@@ -2,86 +2,64 @@ package storage
 
 import (
 	"database/sql"
-	"errors"
+	"github.com/ajugalushkin/url-shortener/internal/model"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 const file string = "internal/db/store.db"
+const create string = `CREATE TABLE IF NOT EXISTS urls (
+	key	TEXT NOT NULL PRIMARY key,
+	url	TEXT NOT NULL 
+)`
 
-type URLData struct {
-	Key string
-	Url string
+type Storage struct {
+	db *sql.DB
 }
 
-func Create(url URLData) error {
+func NewStorage() (*Storage, error) {
 	db, err := sql.Open("sqlite3", file)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer db.Close()
-
-	_, errCreate := db.Exec("insert into urls (key,url) values ($1,$2)", url.Key, url.Url)
-	if errCreate != nil {
-		return errCreate
+	if _, err := db.Exec(create); err != nil {
+		return nil, err
 	}
-
-	return nil
+	return &Storage{
+		db: db,
+	}, nil
 }
 
-func GetByUrl(url string) (URLData, error) {
-	db, err := sql.Open("sqlite3", file)
+func (c *Storage) Insert(urlData model.URLData) (int, error) {
+	res, err := c.db.Exec("insert into urls (key,url) values ($1,$2)", urlData.Key, urlData.Url)
 	if err != nil {
-		return URLData{}, err
-	}
-	defer db.Close()
-
-	rows, err := db.Query("select * from urls where url = $1", url)
-	if err != nil {
-		return URLData{}, err
-	}
-	defer rows.Close()
-
-	urlData := URLData{}
-	for rows.Next() {
-		err := rows.Scan(&urlData.Key, &urlData.Url)
-		if err != nil {
-			return URLData{}, err
-		}
-		break
+		return 0, err
 	}
 
-	if urlData == (URLData{}) {
-		return URLData{}, errors.New("Key not found!")
+	var id int64
+	if id, err = res.LastInsertId(); err != nil {
+		return 0, err
 	}
-
-	return urlData, nil
+	return int(id), nil
 }
 
-func GetByKey(key string) (string, error) {
-	db, err := sql.Open("sqlite3", file)
-	if err != nil {
-		return "", err
-	}
-	defer db.Close()
+func (c *Storage) Retrieve(id string) (model.URLData, error) {
+	row := c.db.QueryRow("select * from urls where key = $1", id)
 
-	rows, err := db.Query("select * from urls where key = $1", key)
-	if err != nil {
-		return "", err
+	urlData := model.URLData{}
+	var err error
+	if err = row.Scan(&urlData.Key, &urlData.Url); err == sql.ErrNoRows {
+		return model.URLData{}, err
 	}
-	defer rows.Close()
+	return urlData, err
+}
 
-	urlData := URLData{}
-	for rows.Next() {
-		err := rows.Scan(&urlData.Key, &urlData.Url)
-		if err != nil {
-			return "", err
-		}
-		break
+func (c *Storage) RetrieveByURL(url string) (model.URLData, error) {
+	row := c.db.QueryRow("select * from urls where url = $1", url)
+
+	urlData := model.URLData{}
+	var err error
+	if err = row.Scan(&urlData.Key, &urlData.Url); err == sql.ErrNoRows {
+		return model.URLData{}, err
 	}
-
-	if urlData == (URLData{}) {
-		return "", errors.New("Key not found!")
-	}
-
-	return urlData.Url, nil
+	return urlData, err
 }

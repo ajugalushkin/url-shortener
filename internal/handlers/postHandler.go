@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/ajugalushkin/url-shortener/internal/model"
 	"github.com/ajugalushkin/url-shortener/internal/shorten"
 	"github.com/ajugalushkin/url-shortener/internal/storage"
 	"io"
@@ -26,12 +27,18 @@ func PostHandler(wrt http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	UrlData, err := storage.GetByUrl(originalURL)
-	if err != nil {
-		UrlData = storage.URLData{
+	storageApi, errGetApi := storage.NewStorage()
+	if errGetApi != nil {
+		http.Error(wrt, "Storage not found!", http.StatusBadRequest)
+		return
+	}
+
+	UrlData, errGet := storageApi.RetrieveByURL(originalURL)
+	if errGet != nil {
+		UrlData = model.URLData{
 			Key: shorten.GenerateShortKey(),
 			Url: originalURL}
-		err = storage.Create(UrlData)
+		_, err = storageApi.Insert(UrlData)
 		if err != nil {
 			http.Error(wrt, "ShortKey not created", http.StatusNotFound)
 			return
