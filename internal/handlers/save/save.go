@@ -11,14 +11,7 @@ import (
 func New(serviceAPI *service.Service) http.HandlerFunc {
 	return func(wrt http.ResponseWriter, req *http.Request) {
 		if req.Method != http.MethodPost {
-			/*			redirect.New(serviceAPI).ServeHTTP(wrt, req)
-						return*/
 			http.Error(wrt, "Invalid request method", http.StatusBadRequest)
-			return
-		}
-
-		if contentType := req.Header.Get("Content-Type"); contentType != "text/plain" {
-			http.Error(wrt, "Wrong Content-Type parameter", http.StatusBadRequest)
 			return
 		}
 
