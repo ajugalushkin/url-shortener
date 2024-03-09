@@ -62,6 +62,7 @@ func TestPostHandler(t *testing.T) {
 			handler.ServeHTTP(writer, request)
 
 			result := writer.Result()
+			defer result.Body.Close()
 
 			assert.Equal(t, test.want.code, result.StatusCode)
 			assert.Equal(t, test.want.contentType, result.Header.Get("Content-Type"))

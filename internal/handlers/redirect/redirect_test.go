@@ -83,9 +83,7 @@ func TestGetHandler(t *testing.T) {
 			request.Header.Set("Content-Type", "text/plain")
 			writer := httptest.NewRecorder()
 
-			serviceAPI := service.NewService(storage.NewInMemory())
-
-			handler := New(serviceAPI)
+			handler := New(service.NewService(storage.NewInMemory()))
 			handler.ServeHTTP(writer, request)
 
 			result := writer.Result()
