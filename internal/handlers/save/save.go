@@ -30,7 +30,7 @@ func New(serviceAPI *service.Service) echo.HandlerFunc {
 		if err != nil {
 			return context.String(http.StatusBadRequest, "URL not shortening")
 		}
-		
+
 		shortenedURL := fmt.Sprintf("http://%s/%s", config.BaseURL, shortenURL.Key)
 
 		context.Response().Header().Set(echo.HeaderContentType, echo.MIMETextPlain)
