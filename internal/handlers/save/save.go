@@ -2,6 +2,7 @@ package save
 
 import (
 	"fmt"
+	"github.com/ajugalushkin/url-shortener/internal/config"
 	"github.com/ajugalushkin/url-shortener/internal/model"
 	"github.com/ajugalushkin/url-shortener/internal/service"
 	"github.com/labstack/echo/v4"
@@ -30,7 +31,7 @@ func New(serviceAPI *service.Service) echo.HandlerFunc {
 			return context.String(http.StatusBadRequest, "URL not shortening")
 		}
 
-		shortenedURL := fmt.Sprintf("http://localhost:8080/%s", shortenURL.Key)
+		shortenedURL := fmt.Sprintf("%s/%s", config.BaseURL, shortenURL.Key)
 
 		context.Response().Header().Set(echo.HeaderContentType, echo.MIMETextPlain)
 		context.Response().Status = http.StatusCreated
