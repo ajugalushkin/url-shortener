@@ -34,7 +34,7 @@ func TestPostHandler(t *testing.T) {
 				contentType: echo.MIMETextPlain,
 			},
 			want: want{
-				code:        http.StatusOK,
+				code:        http.StatusCreated,
 				contentType: echo.MIMETextPlain,
 			},
 		},

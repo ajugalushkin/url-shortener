@@ -33,8 +33,8 @@ func New(serviceAPI *service.Service) echo.HandlerFunc {
 		shortenedURL := fmt.Sprintf("http://localhost:8080/%s", shortenURL.Key)
 
 		context.Response().Header().Set(echo.HeaderContentType, echo.MIMETextPlain)
-		context.Response().Write([]byte(shortenedURL))
 		context.Response().Status = http.StatusCreated
+		context.Response().Write([]byte(shortenedURL))
 
 		return context.String(http.StatusCreated, "")
 	}

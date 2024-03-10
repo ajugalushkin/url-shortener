@@ -16,7 +16,10 @@ func Run() error {
 	server.POST("/", save.New(serviceAPI))
 	server.GET("/:id", redirect.New(serviceAPI))
 
-	server.Logger.Fatal(server.Start(":8080"))
+	err := server.Start(":8080")
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
