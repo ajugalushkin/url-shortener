@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+	"github.com/ajugalushkin/url-shortener/internal/config"
 	"github.com/ajugalushkin/url-shortener/internal/handlers/redirect"
 	"github.com/ajugalushkin/url-shortener/internal/handlers/save"
 	"github.com/ajugalushkin/url-shortener/internal/service"
@@ -16,7 +18,8 @@ func Run() error {
 	server.POST("/", save.New(serviceAPI))
 	server.GET("/:id", redirect.New(serviceAPI))
 
-	err := server.Start(":8080")
+	fmt.Println("Running server on", config.FlagRunAddr)
+	err := server.Start(config.FlagRunAddr)
 	if err != nil {
 		return err
 	}
