@@ -31,7 +31,7 @@ func New(serviceAPI *service.Service) echo.HandlerFunc {
 			return context.String(http.StatusBadRequest, "URL not shortening")
 		}
 
-		shortenedURL := fmt.Sprintf("http://%s/%s", config.BaseURL, shortenURL.Key)
+		shortenedURL := fmt.Sprintf("%s/%s", config.BaseURL, shortenURL.Key)
 
 		context.Response().Header().Set(echo.HeaderContentType, echo.MIMETextPlain)
 		context.Response().Status = http.StatusCreated
