@@ -2,6 +2,7 @@ package save
 
 import (
 	"fmt"
+	"github.com/ajugalushkin/url-shortener/internal/config"
 	"github.com/ajugalushkin/url-shortener/internal/model"
 	"github.com/ajugalushkin/url-shortener/internal/service"
 	"io"
@@ -33,7 +34,7 @@ func New(serviceAPI *service.Service) http.HandlerFunc {
 			return
 		}
 
-		shortenedURL := fmt.Sprintf("http://localhost:8080/%s", shortenURL.Key)
+		shortenedURL := fmt.Sprintf("http://%s/%s", config.BaseURL, shortenURL.Key)
 
 		wrt.Header().Set("Content-Type", "text/plain")
 		wrt.WriteHeader(http.StatusCreated)

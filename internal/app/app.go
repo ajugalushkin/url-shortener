@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+	"github.com/ajugalushkin/url-shortener/internal/config"
 	"github.com/ajugalushkin/url-shortener/internal/handlers/middleware"
 	"github.com/ajugalushkin/url-shortener/internal/handlers/redirect"
 	"github.com/ajugalushkin/url-shortener/internal/handlers/save"
@@ -16,7 +18,8 @@ func Run() error {
 
 	mux.Handle("/", middleware.Switch(save.New(serviceAPI), redirect.New(serviceAPI)))
 
-	err := http.ListenAndServe(`:8080`, mux)
+	fmt.Println("Running server on", config.FlagRunAddr)
+	err := http.ListenAndServe(config.FlagRunAddr, mux)
 	if err != nil {
 		return err
 	}
